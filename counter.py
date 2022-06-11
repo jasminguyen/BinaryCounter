@@ -41,14 +41,34 @@ class Counter(QWidget):
 
 
     def countUp(self):
-        self.count += 1
+        if self.count == 15:
+            self.count = 0
+            self.lcd.display(self.count)
+        else:
+            self.count += 1
+            self.lcd.display(self.count)
+    
+    def countDown(self):
+        if self.count == 0:
+            self.count = 15
+            self.lcd.display(self.count)
+        else:
+            self.count -= 1
+            self.lcd.display(self.count)
+        
+    def countReset(self):
+        self.count = 0
         self.lcd.display(self.count)
  
 
 if __name__ ==  '__main__':
     app = QApplication([])
     gui = Counter()
-    button = QtButton(UP_PIN)
-    button.changed.connect(gui.countUp)
+    buttonUp = QtButton(UP_PIN)
+    buttonUp.changed.connect(gui.countUp)
+    buttonDown = QtButton(DOWN_PIN)
+    buttonDown.changed.connect(gui.countDown)
+    buttonReset = QtButton(RESET_PIN)
+    buttonReset.changed.connect(gui.countReset)
     app.exec_()
     
