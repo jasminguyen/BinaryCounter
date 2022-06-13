@@ -5,6 +5,9 @@ from gpiozero import Button
 from PyQt5.QtCore import Qt, QObject, pyqtSignal
 from PyQt5.QtWidgets import (QWidget, QLCDNumber,
     QVBoxLayout, QApplication)
+from gpiozero import LED, LEDBoard
+from signal import pause
+
 
 DOWN_PIN = 22
 RESET_PIN = 27
@@ -28,6 +31,7 @@ class Counter(QWidget):
         self.count = 0
 
     def initUi(self):
+        self.leds=LEDBoard(18,23,24,25)
         self.lcd = QLCDNumber()
         self.lcd.display(0)
 
@@ -38,17 +42,20 @@ class Counter(QWidget):
         self.setMinimumSize(400, 200)
         self.setWindowTitle('Counter')
         self.show()
+        
 
 
-    def countUp(self):
+    def countUp(self,value):
         if self.count == 15:
             self.count = 0
             self.lcd.display(self.count)
         else:
             self.count += 1
             self.lcd.display(self.count)
+        
+        value=self.count
     
-    def countDown(self):
+    def countDown(self,value):
         if self.count == 0:
             self.count = 15
             self.lcd.display(self.count)
@@ -56,9 +63,21 @@ class Counter(QWidget):
             self.count -= 1
             self.lcd.display(self.count)
         
-    def countReset(self):
+        value=self.count
+        
+    def countReset(self,value):
         self.count = 0
         self.lcd.display(self.count)
+        value=self.count
+    
+    def countLed(self,value):
+        for i in range(4):
+            div= 2**(3-i)
+            checkValue= int(value/div)
+            if checkValue %2 ==1:
+                self.leds[i].on()
+            else:
+                self.leds[i].off()
  
 
 if __name__ ==  '__main__':
