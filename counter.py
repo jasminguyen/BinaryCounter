@@ -23,6 +23,7 @@ class QtButton(QObject):
 
     def gpioChange(self):
         self.changed.emit()
+        
 
 class Counter(QWidget):
     def __init__(self):
@@ -31,7 +32,7 @@ class Counter(QWidget):
         self.count = 0
 
     def initUi(self):
-        self.leds=LEDBoard(18,23,24,25)
+        self.leds=LEDBoard(18,23,24,25, pwm=True)
         self.lcd = QLCDNumber()
         self.lcd.display(0)
 
@@ -45,35 +46,31 @@ class Counter(QWidget):
         
 
 
-    def countUp(self,value):
+    def countUp(self):
         if self.count == 15:
             self.count = 0
-            self.lcd.display(self.count)
         else:
             self.count += 1
-            self.lcd.display(self.count)
-        
-        value=self.count
+        self.lcd.display(self.count)
+        gui.countLed()
     
-    def countDown(self,value):
+    def countDown(self):
         if self.count == 0:
             self.count = 15
-            self.lcd.display(self.count)
         else:
             self.count -= 1
-            self.lcd.display(self.count)
+        self.lcd.display(self.count)
+        gui.countLed()
         
-        value=self.count
-        
-    def countReset(self,value):
+    def countReset(self):
         self.count = 0
         self.lcd.display(self.count)
-        value=self.count
+        gui.countLed()
     
-    def countLed(self,value):
+    def countLed(self):
         for i in range(4):
             div= 2**(3-i)
-            checkValue= int(value/div)
+            checkValue= int(self.count/div)
             if checkValue %2 ==1:
                 self.leds[i].on()
             else:
